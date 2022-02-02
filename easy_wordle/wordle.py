@@ -28,11 +28,6 @@ class Wordle:
 
         self.possible_words_len = len(self.possible_words)
 
-    # def get_good_word_picks(self):
-    #     self.good_word_picks = [
-    #         word for word in self.possible_words if len(set(word)) == 5
-    #     ]
-
     def _get_word_list(self):
         with open("/usr/share/dict/words") as f:
             word_list = [line.rstrip("\n") for line in f]
@@ -75,10 +70,10 @@ class Wordle:
     def print_words_examples(self,n=5)->None:
         print("\n### EXAMPLE WORDS ###")
         try:
-            print(random.sample(self.possible_words,min(len(self.possible_words),n)))
+            word_examples = random.sample(self.possible_words,min(len(self.possible_words),n))
+            print(", ".join(word_examples))
         except ValueError as e:
             print('There are less that 5 examples, showing 1 example')
-
 
     def print_best_picks(self,n=5)->None:
       
@@ -93,15 +88,13 @@ class Wordle:
 
     def print_current_state(self)->None:
         word_perc = round(100* (len(self.possible_words) / self.possible_words_len),3)
-        print(f"""\n### CURRENT STATE ###\n{len(self.possible_words)} / {self.possible_words_len} words available ({word_perc }%).\n### CURRENT STATE ###"""     
+        print(f"""\n### CURRENT STATE ###\n{len(self.possible_words)} / {self.possible_words_len} words available ({word_perc }%)."""     
         )
         return None
     
     @staticmethod
     def freq_score(word):
         return sum([word_freq[letter] for letter in word])
-
-
 
     def dl_rule(self):
         """Using the disallowed letters input to change the state of possible words"""
@@ -157,8 +150,6 @@ def main():
         w.print_current_state()
         w.print_words_examples(n= 5)
         w.print_best_picks(n= 3)
-
-
 
 if __name__ == "__main__":
     main()
