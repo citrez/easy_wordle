@@ -6,8 +6,8 @@ authors = ["ezra citron <ezracitron@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-nltk = "^3.6.7"
 ipykernel = "^6.7.0"
+pandas = "^1.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
