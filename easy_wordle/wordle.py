@@ -1,4 +1,5 @@
 from typing import Dict
+import random
 
 class Wordle:
     # dl = disallowed_letters, rp=right_place, rp=wrong_place
@@ -23,7 +24,7 @@ class Wordle:
         #     self.input = input
 
         if possible_words is None:
-            self.possible_words = self.get_word_list()
+            self.possible_words = self._get_word_list()
 
         self.possible_words_len = len(self.possible_words)
 
@@ -48,7 +49,7 @@ class Wordle:
     #         word for word in self.possible_words if len(set(word)) == 5
     #     ]
 
-    def get_word_list(self):
+    def _get_word_list(self):
         with open("/usr/share/dict/words") as f:
             word_list = [line.rstrip("\n") for line in f]
 
@@ -81,38 +82,29 @@ class Wordle:
         self.input.append(input_dict)
         return None
 
-    def print_possible_words_examples()->None:
-        pass
+    def print_possible_words_examples(self,n=5)->None:
+        print(random.sample(self.possible_words,n))
 
     def print_current_state(self)->None:
         print(f"""
 ### CURRENT STATE ###
 
 {len(self.possible_words)} / {self.possible_words_len} words available ({ round(100* (len(self.possible_words) / self.possible_words_len),3) }%).\n
-The disallowed letters are {self.dl}.
-The correct letters are: {self.rp}
-The correct letters, wrong place are: {self.wp}
-{w.possible_words[0:5]}
+Possible example words: {w.print_possible_words_examples()}
 ### CURRENT STATE ###
              """     
         )
         return None
 
     def dl_rule(self):
-        # these funcs update state
+        """Using the disallowed letters input to change the state of possible words"""
         self.possible_words = [word for word in self.possible_words if not self.any_letters_in_word(self.dl, word) ]
         return None
 
     def rp_rule(self)->None:
-        # these funcs update state
-        updated_possible_words = list()
+        """Using right place letters input to change the state of possible words"""
         for i in self.rp:
             self.possible_words = [word for word in self.possible_words if word[i] == self.rp[i]]
-            # for word in self.possible_words:
-            #     if (word[i] == self.rp[i]):
-            #         updated_possible_words.append(word)
-            # self.possible_words = updated_possible_words
-
         return None
 
     def wp_check(self, word, n):
@@ -121,13 +113,12 @@ The correct letters, wrong place are: {self.wp}
         check = (word[n] != self.wp[n]) and (self.wp[n] in word)
         return check
 
-    def wp_rule(self):
-        print(self.wp)
+    def wp_rule(self)->None:
+        """Using right place letters input to change the state of possible words"""
         for i in self.wp:
             self.possible_words = [word for word in self.possible_words if self.wp_check(word,i) ] #check that the word does have the letter in the position we know its not in
             self.possible_words = [word for word in self.possible_words if self.wp[i] in word] # check that the letter is indeed in the word
         return None
-
 
     def update_possible_words(self)->None:
         self.dl_rule()
@@ -135,16 +126,12 @@ The correct letters, wrong place are: {self.wp}
         self.wp_rule()
         return None
 
-   
     def check_letter_in_other_categories(self,cats_to_check:list)-> bool:
         print(cats_to_check)
         return False
 
     def parse_input(self, input):
-        print("Parsing Input:")
-
         for i in input:
-
             if input[i]["color"] == "b":
                 if self.check_letter_in_other_categories(cats_to_check=['g','y']):
                     raise Exception
@@ -162,23 +149,11 @@ The correct letters, wrong place are: {self.wp}
 if __name__ == "__main__":
     w = Wordle()
 
-    # print(w.possible_words[0:5])
-    # w.print_current_state()
     while True:
         w.get_user_input()
         w.parse_input(w.input[-1])
         w.update_possible_words()
         w.print_current_state()
 
-    # w.parse_input(w.test_input2)
-    # w.update_possible_words()
-
-    # w.print_current_state()
-
-
-
-    # print(w.dl)
-
-    # print(w.good_word_picks[0:5])
 
 
