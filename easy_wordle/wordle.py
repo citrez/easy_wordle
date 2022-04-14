@@ -29,11 +29,12 @@ class Wordle:
         self.possible_words_len = len(self.possible_words)
 
     def _get_word_list(self):
-        with open("/usr/share/dict/words") as f:
+       #with open("/usr/share/dict/words") as f:
+        with open("data/wordle_words.txt") as f:
             word_list = [line.rstrip("\n") for line in f]
 
         word_list = list(set([word.lower() for word in word_list])) # turn all words lowercase and remove dupes
-        word_list = [word for word in word_list if len(word) == 5] # only look at 5 letter words
+        # word_list = [word for word in word_list if len(word) == 5] # only look at 5 letter words
         word_list.sort() # sort alphabetically
         return word_list
 
@@ -56,7 +57,7 @@ class Wordle:
 
         if len(word)!=5:
             raise Exception("Word must be 5 letters")
-        colors = input("Type the colors of the letters: ")
+        colors = input("Type the colors of the letters (b/y/g): ")
         if len(colors)!=5:
             raise Exception("There must be exactly 5 colors")
 
@@ -75,14 +76,14 @@ class Wordle:
         except ValueError as e:
             print('There are less that 5 examples, showing 1 example')
 
-    def print_best_picks(self,n=5)->None:
+    def print_best_picks(self,n=10)->None:
       
         print("\n### BEST PICK WORDS ###")
         no_dupe_letters= [word for word in self.possible_words if len(''.join(set(word)))==5  ]
         word_with_freq = [( w, self.freq_score(w) ) for w in no_dupe_letters]
         word_with_freq.sort(key=lambda x:-x[1])
         # max_freq= max(word_with_freq,key = lambda x:x[1])[1] 
-        best_picks = [ w[0] for w in word_with_freq[0:min(5,len(word_with_freq))]  ]
+        best_picks = [ w[0] for w in word_with_freq[0:min(n,len(word_with_freq))]  ]
         print(", ".join(best_picks))
 
 
@@ -148,8 +149,8 @@ def main():
         w.parse_input(w.input[-1]) #parse the most recent input
         w.update_possible_words() #update the state
         w.print_current_state()
-        w.print_words_examples(n= 5)
-        w.print_best_picks(n= 3)
+        w.print_words_examples(n= 20)
+        w.print_best_picks(n= 25)
 
 if __name__ == "__main__":
     main()
